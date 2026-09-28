@@ -11,7 +11,11 @@ import pizzaria.dominio.Pedido;
 // sem alterar o serviço.
 public class RepositorioPedidoEmMemoria implements RepositorioDePedidos {
 
-    private ArrayList<Pedido> pedidos = new ArrayList<Pedido>();
+    private ArrayList<Pedido> pedidos;
+
+    public RepositorioPedidoEmMemoria() {
+        this.pedidos = new ArrayList<Pedido>();
+    }
 
     @Override
     public void salvar(Pedido pedido) {
@@ -19,6 +23,7 @@ public class RepositorioPedidoEmMemoria implements RepositorioDePedidos {
         System.out.println("[REPOSITORIO] Pedido " + pedido.getId() + " salvo.");
     }
 
+    // Retorna o pedido com esse id, ou null se ele não existir.
     @Override
     public Pedido buscarPorId(String id) {
         for (int i = 0; i < pedidos.size(); i++) {

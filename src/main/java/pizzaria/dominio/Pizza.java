@@ -10,6 +10,10 @@ public class Pizza {
     private double preco;
 
     public Pizza(String sabor, Tamanho tamanho, double preco) {
+        // Regra de integridade: uma pizza precisa ter preço positivo.
+        if (preco <= 0) {
+            throw new IllegalArgumentException("O preco da pizza deve ser maior que zero.");
+        }
         this.sabor = sabor;
         this.tamanho = tamanho;
         this.preco = preco;

@@ -3,7 +3,8 @@ package pizzaria.dominio;
 import java.util.ArrayList;
 
 // SRP (Single Responsibility Principle):
-// Esta classe só guarda os dados do pedido e soma o valor das pizzas.
+// Esta classe só guarda os dados do pedido, soma o valor das pizzas
+// e protege as próprias regras de estado (ex.: não mexer em pedido já pago).
 // Ela não aplica taxas, não paga, não salva e não notifica:
 // cada uma dessas tarefas está em outra classe.
 public class Pedido {
@@ -20,7 +21,11 @@ public class Pedido {
         this.pago = false;
     }
 
+    // Único jeito de colocar um item no pedido.
     public void adicionarItem(ItemPedido item) {
+        if (pago) {
+            throw new IllegalStateException("Nao e possivel adicionar itens a um pedido ja pago.");
+        }
         itens.add(item);
     }
 
@@ -35,6 +40,9 @@ public class Pedido {
     }
 
     public void marcarComoPago() {
+        if (pago) {
+            throw new IllegalStateException("O pedido " + id + " ja foi pago.");
+        }
         this.pago = true;
     }
 
@@ -46,8 +54,14 @@ public class Pedido {
         return cliente;
     }
 
+    // Devolve uma CÓPIA da lista. Assim ninguém de fora consegue
+    // adicionar ou remover itens sem passar pelo adicionarItem.
     public ArrayList<ItemPedido> getItens() {
-        return itens;
+        ArrayList<ItemPedido> copia = new ArrayList<ItemPedido>();
+        for (int i = 0; i < itens.size(); i++) {
+            copia.add(itens.get(i));
+        }
+        return copia;
     }
 
     public boolean isPago() {

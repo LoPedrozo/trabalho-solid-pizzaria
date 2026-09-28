@@ -12,6 +12,7 @@ import pizzaria.dominio.Tamanho;
 import pizzaria.notificacao.NotificacaoEmail;
 import pizzaria.notificacao.NotificacaoWhatsApp;
 import pizzaria.pagamento.PagamentoCartao;
+import pizzaria.pagamento.PagamentoDinheiro;
 import pizzaria.pagamento.PagamentoPix;
 import pizzaria.persistencia.RepositorioPedidoEmMemoria;
 import pizzaria.regra.DescontoCupom;
@@ -21,7 +22,8 @@ import pizzaria.servico.CalculadoraDePreco;
 import pizzaria.servico.ServicoDePedido;
 
 // DIP (Dependency Inversion Principle) na prática:
-// O Main é o único lugar do sistema onde as classes concretas são instanciadas.
+// O Main é o único lugar do sistema onde as implementações das interfaces
+// (regras, pagamentos, notificações, calculadora e repositório) são escolhidas e criadas.
 // Aqui fazemos a montagem manual da injeção de dependências.
 // É isso que permite trocar Pix por Cartão (ou WhatsApp por E-mail)
 // sem alterar uma única linha do ServicoDePedido.
@@ -73,15 +75,16 @@ public class Main {
         Cliente cliente2 = new Cliente("Joao Souza", "(51) 98888-2222", "joao@email.com", endereco2);
         Pedido pedido2 = new Pedido("PED-002", cliente2);
 
-        // 2. Nenhuma pizza GRANDE, então a promoção não entraria aqui
+        // 2. Nenhuma pizza GRANDE: a promoção será avaliada, mas não dará desconto
         Pizza portuguesa = new Pizza("Portuguesa", Tamanho.MEDIA, 45.00);
         Pizza chocolate = new Pizza("Chocolate", Tamanho.PEQUENA, 30.00);
         pedido2.adicionarItem(new ItemPedido(portuguesa, 1));
         pedido2.adicionarItem(new ItemPedido(chocolate, 1));
 
-        // 3. Regras de preço diferentes
+        // 3. Regras de preço diferentes (a promoção está na lista de propósito)
         ArrayList<RegraDePreco> regras2 = new ArrayList<RegraDePreco>();
         regras2.add(new TaxaDeEntrega(3.00));
+        regras2.add(new PromocaoPizzaGrande(5.00));
         regras2.add(new DescontoCupom("ALUNO10", 10.0));
         CalculadoraDePreco calculadora2 = new CalculadoraDePreco(regras2);
 
@@ -93,6 +96,20 @@ public class Main {
         ServicoDePedido servico2 = new ServicoDePedido(calculadora2, cartao, email, repositorio);
         servico2.finalizarPedido(pedido2);
 
+        // ==================== CENÁRIO 3 ====================
+        // LSP: só o meio de pagamento muda. O resto é reaproveitado do cenário 1.
+        System.out.println();
+        System.out.println("--------------------------------------------------");
+        System.out.println("CENARIO 3 - Dinheiro + WhatsApp");
+        System.out.println("--------------------------------------------------");
+
+        Pedido pedido3 = new Pedido("PED-003", cliente1);
+        pedido3.adicionarItem(new ItemPedido(margherita, 2));
+
+        PagamentoDinheiro dinheiro = new PagamentoDinheiro();
+        ServicoDePedido servico3 = new ServicoDePedido(calculadora1, dinheiro, whatsApp, repositorio);
+        servico3.finalizarPedido(pedido3);
+
         // ==================== REPOSITÓRIO ====================
         System.out.println();
         System.out.println("--------------------------------------------------");
@@ -100,6 +117,11 @@ public class Main {
         System.out.println("--------------------------------------------------");
 
         Pedido encontrado = repositorio.buscarPorId("PED-001");
-        System.out.println("Pedido " + encontrado.getId() + " esta pago? " + encontrado.isPago());
+        // buscarPorId devolve null quando não acha o pedido, então testamos antes de usar.
+        if (encontrado == null) {
+            System.out.println("Pedido PED-001 nao encontrado.");
+        } else {
+            System.out.println("Pedido " + encontrado.getId() + " esta pago? " + encontrado.isPago());
+        }
     }
 }

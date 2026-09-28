@@ -31,8 +31,9 @@ java -cp out pizzaria.Main
 
 ### S — Single Responsibility Principle (Responsabilidade Única)
 
-Cada classe tem um único motivo para mudar. `CalculadoraDePreco` só calcula o preço,
-`RepositorioPedidoEmMemoria` só guarda pedidos e cada classe de `regra`, `pagamento` e
+Cada classe tem um único motivo para mudar. As entidades (`Pedido`, `ItemPedido`, `Pizza`, `Endereco`,
+`Cliente`) só guardam seus dados e protegem suas regras de integridade (ex.: quantidade mínima, pedido pago
+não recebe itens). `CalculadoraDePreco` só calcula o preço e cada classe de `regra`, `pagamento` e
 `notificacao` cuida de uma única coisa.
 
 ### O — Open/Closed Principle (Aberto/Fechado)
@@ -50,14 +51,14 @@ com `CanalDeNotificacao`. Todas cumprem o contrato de verdade: nenhuma lança ex
 ### I — Interface Segregation Principle (Segregação de Interfaces)
 
 As interfaces do pacote `contrato` são pequenas e específicas: `RegraDePreco`, `MeioDePagamento`,
-`CanalDeNotificacao` e `RepositorioDePedidos` têm apenas um ou dois métodos cada.
+`CanalDeNotificacao`, `RepositorioDePedidos` e `CalculoDePreco` têm apenas um ou dois métodos cada.
 Nenhuma classe é obrigada a implementar métodos que não usa.
 
 ### D — Dependency Inversion Principle (Inversão de Dependência)
 
-`ServicoDePedido` é a classe de alto nível e só conhece as interfaces, recebidas pelo construtor.
-Não existe `new` dentro dela. Quem decide quais implementações usar é o `Main`, que monta
-todos os objetos e injeta as dependências.
+`ServicoDePedido` é a classe de alto nível e só conhece interfaces (`CalculoDePreco`, `MeioDePagamento`,
+`CanalDeNotificacao` e `RepositorioDePedidos`), recebidas pelo construtor. Não existe `new` dentro dela.
+Quem decide quais implementações usar é o `Main`, que monta todos os objetos e injeta as dependências.
 
 ## Como estender o sistema
 

@@ -9,6 +9,10 @@ public class ItemPedido {
     private int quantidade;
 
     public ItemPedido(Pizza pizza, int quantidade) {
+        // Regra de integridade: não existe item com zero ou menos unidades.
+        if (quantidade < 1) {
+            throw new IllegalArgumentException("A quantidade deve ser pelo menos 1.");
+        }
         this.pizza = pizza;
         this.quantidade = quantidade;
     }

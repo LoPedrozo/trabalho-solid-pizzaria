@@ -10,6 +10,10 @@ public class Endereco {
     private double distanciaKm;
 
     public Endereco(String rua, String bairro, double distanciaKm) {
+        // Regra de integridade: distância não pode ser negativa.
+        if (distanciaKm < 0) {
+            throw new IllegalArgumentException("A distancia nao pode ser negativa.");
+        }
         this.rua = rua;
         this.bairro = bairro;
         this.distanciaKm = distanciaKm;

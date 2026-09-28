@@ -5,7 +5,7 @@ import pizzaria.contrato.MeioDePagamento;
 // LSP (Liskov Substitution Principle):
 // Pode ser usado em qualquer lugar que espera um MeioDePagamento,
 // e cumpre o contrato de verdade (paga e informa o nome).
-// OCP: um novo meio de pagamento é só uma classe nova.
+// SRP: esta classe só sabe registrar o pagamento em dinheiro na entrega.
 public class PagamentoDinheiro implements MeioDePagamento {
 
     @Override
