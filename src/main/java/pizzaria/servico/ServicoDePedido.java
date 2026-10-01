@@ -17,6 +17,10 @@ import pizzaria.dominio.Pedido;
 // nem se a notificação é WhatsApp ou e-mail.
 // Quem decide isso é o Main, através da injeção pelo construtor.
 // Por isso não existe nenhum "new" dentro desta classe.
+// SRP: a responsabilidade desta classe é só coordenar as etapas do pedido.
+// Cada etapa (calcular, pagar, salvar, notificar) é feita por outra classe.
+// Usar as classes de domínio (Pedido, Endereco, ItemPedido) não fere o DIP:
+// são entidades estáveis, e não detalhes de infraestrutura.
 public class ServicoDePedido {
 
     private CalculoDePreco calculadora;
