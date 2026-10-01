@@ -15,6 +15,7 @@ public class Pedido {
     private boolean pago;
 
     public Pedido(String id, Cliente cliente) {
+        // Todo pedido começa vazio e ainda não pago.
         this.id = id;
         this.cliente = cliente;
         this.itens = new ArrayList<ItemPedido>();
@@ -38,7 +39,7 @@ public class Pedido {
         }
         return subtotal;
     }
-
+    // Regra de integridade: um pedido não pode ser pago duas vezes.
     public void marcarComoPago() {
         if (pago) {
             throw new IllegalStateException("O pedido " + id + " ja foi pago.");
